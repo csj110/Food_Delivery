@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -162,14 +168,147 @@ class MyApp extends StatelessWidget {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 10,
+                      padding: EdgeInsets.zero,
+                      itemCount: foods.length,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
-                          height: 120,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(7.0),
+                          ),
                           margin:
-                              EdgeInsets.only(left: 12, right: 12, bottom: 15),
-                          child: Placeholder(),
+                              EdgeInsets.only(left: 8, right: 8, bottom: 15),
+                          padding: EdgeInsets.all(7),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 7,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.0),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        foods[index].imgPath,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 15,
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 14),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            flex: 8,
+                                            child: Text(
+                                              foods[index].title,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                              flex: 2,
+                                              child: IconButton(
+                                                icon: foods[index].isLike
+                                                    ? Icon(
+                                                        Icons.favorite,
+                                                        color: Colors.red,
+                                                      )
+                                                    : Icon(
+                                                        Icons.favorite_border,
+                                                        color: Colors.red,
+                                                      ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    foods[index].isLike =
+                                                        !foods[index].isLike;
+                                                  });
+                                                },
+                                              )),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Text(
+                                        foods[index].food,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black.withOpacity(0.6),
+                                        ),
+                                      ),
+                                      Text(
+                                        foods[index].price,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            flex: 3,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Row(
+                                                  children: _stars(),
+                                                ),
+                                                Text(
+                                                  '${foods[index].reviewCount} reviews',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.grey,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: foods[index].freeDelivery
+                                                ? Container(
+                                                    height: 18,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.orange,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        'free delivery',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         );
                       },
                     ),
@@ -181,6 +320,23 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Widget> _stars() {
+    List<Widget> widgets = List();
+    for (var i = 0; i < 4; i++) {
+      widgets.add(Icon(
+        Icons.star,
+        color: Colors.orange,
+        size: 18,
+      ));
+    }
+    widgets.add(Icon(
+      Icons.star,
+      color: Colors.grey,
+      size: 18,
+    ));
+    return widgets;
   }
 }
 
@@ -225,3 +381,103 @@ class CategoryItem extends StatelessWidget {
     );
   }
 }
+
+class FoodItem {
+  String imgPath;
+  String title;
+  String food;
+  String price;
+  int reviewCount;
+  bool isLike;
+  bool freeDelivery;
+
+  FoodItem(
+      {this.imgPath,
+      this.title,
+      this.food,
+      this.price,
+      this.reviewCount,
+      this.isLike = false,
+      this.freeDelivery = false});
+}
+
+List<FoodItem> foods = [
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2017/11/13/03/56/grilled-pineapple-pork-burrito-2944562__340.jpg',
+    title: 'Paco fish taco and more',
+    food: "Seafood, Mexican, fish tacos",
+    price: "min, order \$15.00",
+    reviewCount: 157,
+    isLike: true,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395__340.jpg',
+    title: 'The Kitchen',
+    food: "Pizza, burgers, fries",
+    price: "min, order \$10.00",
+    reviewCount: 122,
+    freeDelivery: true,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2018/09/21/18/25/fillet-3693670__340.jpg',
+    title: 'Joe and sons grill steak house',
+    food: "Ameraican, steak, ribs",
+    price: "min, order \$10.00",
+    reviewCount: 98,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2017/11/13/03/56/grilled-pineapple-pork-burrito-2944562__340.jpg',
+    title: 'Paco fish taco and more',
+    food: "Seafood, Mexican, fish tacos",
+    price: "min, order \$15.00",
+    reviewCount: 157,
+    isLike: true,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395__340.jpg',
+    title: 'The Kitchen',
+    food: "Pizza, burgers, fries",
+    price: "min, order \$10.00",
+    reviewCount: 122,
+    freeDelivery: true,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2018/09/21/18/25/fillet-3693670__340.jpg',
+    title: 'Joe and sons grill steak house',
+    food: "Ameraican, steak, ribs",
+    price: "min, order \$10.00",
+    reviewCount: 98,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2017/11/13/03/56/grilled-pineapple-pork-burrito-2944562__340.jpg',
+    title: 'Paco fish taco and more',
+    food: "Seafood, Mexican, fish tacos",
+    price: "min, order \$15.00",
+    reviewCount: 157,
+    isLike: true,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395__340.jpg',
+    title: 'The Kitchen',
+    food: "Pizza, burgers, fries",
+    price: "min, order \$10.00",
+    reviewCount: 122,
+    freeDelivery: true,
+  ),
+  FoodItem(
+    imgPath:
+        'https://cdn.pixabay.com/photo/2018/09/21/18/25/fillet-3693670__340.jpg',
+    title: 'Joe and sons grill steak house',
+    food: "Ameraican, steak, ribs",
+    price: "min, order \$10.00",
+    reviewCount: 98,
+  ),
+];
